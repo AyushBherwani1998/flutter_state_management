@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_state_management/Counter.dart';
 
-class CounterProvider extends InheritedWidget {
+class CounterProvider with ChangeNotifier{
   final Counter counter;
 
-  CounterProvider({this.counter, Widget child}) : super(child: child);
+  CounterProvider({this.counter});
 
-  static CounterProvider of(BuildContext context){
-    return context.dependOnInheritedWidgetOfExactType<CounterProvider>();
+  void increment() {
+    counter.increment();
+    notifyListeners();
   }
-
-  @override
-  bool updateShouldNotify(CounterProvider oldWidget) => true;
 }

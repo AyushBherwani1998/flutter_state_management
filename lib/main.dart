@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_state_management/Counter.dart';
 import 'package:flutter_state_management/CounterProvider.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(CounterProvider(
-    child: MaterialApp(
-      home: MyApp(),
-    ),
-    counter: Counter(count: 0)));
+void main() => runApp(ChangeNotifierProvider<CounterProvider>(
+      create: (BuildContext context) =>
+          CounterProvider(counter: Counter(count: 0)),
+      child: MaterialApp(
+        home: MyApp(),
+      ),
+    ));
 
 class MyApp extends StatelessWidget {
   @override
@@ -35,11 +38,10 @@ class FirstClass extends StatefulWidget {
 class _FirstClassState extends State<FirstClass> {
   @override
   Widget build(BuildContext context) {
-    CounterProvider counterProvider =
-        context.dependOnInheritedWidgetOfExactType<CounterProvider>();
+    final provider = Provider.of<CounterProvider>(context);
     return Container(
       alignment: Alignment.center,
-      child: Text(counterProvider.counter.count.toString()),
+      child: Text(provider.counter.count.toString()),
     );
   }
 }
@@ -52,8 +54,7 @@ class SecondClass extends StatefulWidget {
 class _SecondClassState extends State<SecondClass> {
   @override
   Widget build(BuildContext context) {
-    CounterProvider counterProvider =
-        context.dependOnInheritedWidgetOfExactType<CounterProvider>();
+    final provider = Provider.of<CounterProvider>(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.push(
@@ -65,7 +66,7 @@ class _SecondClassState extends State<SecondClass> {
       ),
       body: Container(
         alignment: Alignment.center,
-        child: Text(counterProvider.counter.count.toString()),
+        child: Text(provider.counter.count.toString()),
       ),
     );
   }
@@ -79,10 +80,10 @@ class ThirdClass extends StatefulWidget {
 class _ThirdClassState extends State<ThirdClass> {
   @override
   Widget build(BuildContext context) {
-    CounterProvider counterProvider = CounterProvider.of(context);
+    final provider = Provider.of<CounterProvider>(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => setState(()=>counterProvider.counter.increment()),
+        onPressed: () => setState(() => provider.counter.increment()),
         child: Icon(Icons.add),
       ),
       appBar: AppBar(
@@ -90,7 +91,7 @@ class _ThirdClassState extends State<ThirdClass> {
       ),
       body: Container(
         alignment: Alignment.center,
-        child: Text(counterProvider.counter.count.toString()),
+        child: Text(provider.counter.count.toString()),
       ),
     );
   }
