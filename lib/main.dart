@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_state_management/Counter.dart';
-import 'package:flutter_state_management/CounterProvider.dart';
+import 'package:flutter_state_management/CounterModel.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-void main() => runApp(CounterProvider(
-    child: MaterialApp(
-      home: MyApp(),
-    ),
-    counter: Counter(count: 0)));
+void main() => runApp(ScopedModel<CounterModel>(
+      model: CounterModel(),
+      child: MaterialApp(
+        home: MyApp(),
+      ),
+    ));
 
 class MyApp extends StatelessWidget {
   @override
@@ -27,33 +28,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class FirstClass extends StatefulWidget {
-  @override
-  _FirstClassState createState() => _FirstClassState();
-}
-
-class _FirstClassState extends State<FirstClass> {
+class FirstClass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    CounterProvider counterProvider =
-        context.dependOnInheritedWidgetOfExactType<CounterProvider>();
     return Container(
-      alignment: Alignment.center,
-      child: Text(counterProvider.counter.count.toString()),
-    );
+        alignment: Alignment.center,
+        child: ScopedModelDescendant<CounterModel>(
+          builder: (context, _, model) {
+            return Text(model.count.toString());
+          },
+        ));
   }
 }
 
-class SecondClass extends StatefulWidget {
-  @override
-  _SecondClassState createState() => _SecondClassState();
-}
-
-class _SecondClassState extends State<SecondClass> {
+class SecondClass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    CounterProvider counterProvider =
-        context.dependOnInheritedWidgetOfExactType<CounterProvider>();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.push(
@@ -65,32 +55,42 @@ class _SecondClassState extends State<SecondClass> {
       ),
       body: Container(
         alignment: Alignment.center,
-        child: Text(counterProvider.counter.count.toString()),
+        child: ScopedModelDescendant<CounterModel>(
+          builder: (context, _, model) {
+            return Text(model.count.toString());
+          },
+        ),
       ),
     );
   }
 }
 
-class ThirdClass extends StatefulWidget {
-  @override
-  _ThirdClassState createState() => _ThirdClassState();
-}
-
-class _ThirdClassState extends State<ThirdClass> {
+class ThirdClass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    CounterProvider counterProvider = CounterProvider.of(context);
+    print("Debug 1");
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => setState(()=>counterProvider.counter.increment()),
-        child: Icon(Icons.add),
+      floatingActionButton: ScopedModelDescendant<CounterModel>(
+        rebuildOnChange: false,
+        builder: (context, _, model) {
+          print("Debug 2");
+          return FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () => model.increment(),
+          );
+        },
       ),
       appBar: AppBar(
         title: Text("Third Class"),
       ),
       body: Container(
         alignment: Alignment.center,
-        child: Text(counterProvider.counter.count.toString()),
+        child: ScopedModelDescendant<CounterModel>(
+          builder: (context, _, model) {
+            print("Debug 3");
+            return Text(model.count.toString());
+          },
+        ),
       ),
     );
   }
